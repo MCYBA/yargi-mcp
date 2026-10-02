@@ -1,3 +1,5 @@
+> **Orijinal repo saidsurucu'ye aittir. Orijinal repo kaybolduğu için burada paylaşım yapılmıştır. Şuanda bu repo üzerinde çalışma sürdürülmemektedir**
+
 # Yargı MCP: Türk Hukuk Kaynakları için MCP Sunucusu
 
 > ## ✨ Profesyonel Sürüm Hazır: Yargı MCP Pro
