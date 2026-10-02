@@ -1,0 +1,61 @@
+[project]
+name = "yargi-mcp"
+version = "0.2.1"
+description = "MCP Server For Turkish Legal Databases"
+readme = "README.md"
+requires-python = ">=3.11"
+license = {text = "MIT"}
+authors = [{name = "Said Surucu", email = "saidsrc@gmail.com"}]
+keywords = ["mcp", "turkish-law", "legal", "yargitay", "danistay", "bddk", "btk", "kvkk", "turkish", "law", "court", "decisions"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Legal Industry",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Text Processing :: Markup :: Markdown",
+    "Operating System :: OS Independent",
+]
+urls = {Homepage = "https://github.com/saidsurucu/yargi-mcp", Issues = "https://github.com/saidsurucu/yargi-mcp/issues"}
+dependencies = [
+    "beautifulsoup4>=4.13.4",
+    "httpx>=0.28.1",
+    "markitdown[pdf]>=0.1.1",
+    "pydantic>=2.11.4",
+    "aiohttp>=3.11.18",
+    "fastmcp>=2.10.5",
+    "pypdf>=5.5.0",
+    "fastapi>=0.115.14",
+    "cryptography>=44.0.0",
+    "openai>=1.0.0",
+    "numpy>=1.24.0",
+]
+
+[project.optional-dependencies]
+asgi = [
+    "uvicorn[standard]>=0.30.0",
+    "starlette>=0.37.0",
+]
+api = [
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.30.0",
+]
+production = [
+    "gunicorn>=22.0.0",
+    "uvicorn[standard]>=0.30.0",
+]
+
+[project.scripts]
+yargi-mcp = "mcp_server_main:main"
+
+[tool.setuptools]
+py-modules = ["mcp_server_main", "asgi_app"]
+
+[tool.setuptools.packages.find]
+include = ["*_mcp_module", "semantic_search"]
+
+[build-system]
+requires = ["setuptools>=65.0", "wheel"]
+build-backend = "setuptools.build_meta"
