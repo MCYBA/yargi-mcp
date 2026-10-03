@@ -29,6 +29,8 @@ class YargitayOfficialApiClient:
     Targets the detailed search endpoint (e.g., /aramadetaylist) based on user-provided payload.
     """
     BASE_URL = "https://karararama.yargitay.gov.tr"
+    SEARCH_ENDPOINT = "/aramalist"
+
     # The form action was "/detayliArama". This often maps to an API endpoint like "/aramadetaylist".
     # This should be confirmed with the actual API.
     DETAILED_SEARCH_ENDPOINT = "/aramadetaylist" 
@@ -47,6 +49,54 @@ class YargitayOfficialApiClient:
             timeout=request_timeout,
             verify=False # SSL verification disabled as per original user code - use with caution
         )
+
+    async def search_decisions(
+        self, 
+        search_params: YargitayDetailedSearchRequest
+    ) -> YargitayApiSearchResponse:
+        """
+        Performs a detailed search for decisions in Yargitay
+        using the structured search_params.
+        """
+        # Create the main payload structure with the 'data' key
+        request_payload = {"data": search_params.model_dump(exclude_none=True, by_alias=True)}
+        
+        logger.info(f"YargitayOfficialApiClient: Performing detailed search with payload: {request_payload}")
+
+        try:
+            response = await self.http_client.post(self.SEARCH_ENDPOINT, json=request_payload)
+            response.raise_for_status() # Raise an exception for HTTP 4xx or 5xx status codes
+            response_json_data = response.json()
+            
+            logger.debug(f"YargitayOfficialApiClient: Raw API response: {response_json_data}")
+            
+            # Handle None or empty data response from API
+            if response_json_data is None:
+                logger.warning("YargitayOfficialApiClient: API returned None response")
+                response_json_data = {"data": {"data": [], "recordsTotal": 0, "recordsFiltered": 0}}
+            elif not isinstance(response_json_data, dict):
+                logger.warning(f"YargitayOfficialApiClient: API returned unexpected response type: {type(response_json_data)}")
+                response_json_data = {"data": {"data": [], "recordsTotal": 0, "recordsFiltered": 0}}
+            elif response_json_data.get("data") is None:
+                logger.warning("YargitayOfficialApiClient: API response data field is None")
+                response_json_data["data"] = {"data": [], "recordsTotal": 0, "recordsFiltered": 0}
+            
+            # Validate and parse the response using Pydantic models
+            api_response = YargitayApiSearchResponse(**response_json_data)
+
+            # Populate the document_url for each decision entry
+            if api_response.data and api_response.data.data:
+                for decision_item in api_response.data.data:
+                    decision_item.document_url = f"{self.BASE_URL}{self.DOCUMENT_ENDPOINT}?id={decision_item.id}"
+            
+            return api_response
+
+        except httpx.RequestError as e:
+            logger.error(f"YargitayOfficialApiClient: HTTP request error during detailed search: {e}")
+            raise # Re-raise to be handled by the calling MCP tool
+        except Exception as e: # Catches Pydantic ValidationErrors as well
+            logger.error(f"YargitayOfficialApiClient: Error processing or validating detailed search response: {e}")
+            raise
 
     async def search_detailed_decisions(
         self, 
