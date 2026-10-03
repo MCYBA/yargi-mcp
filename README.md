@@ -1,4 +1,4 @@
-> **Orijinal repo saidsurucu'ye aittir. Orijinal repo kaybolduğu için burada paylaşım yapılmıştır. Şuanda bu repo üzerinde çalışma sürdürülmemektedir**
+> **Orijinal repo saidsurucu'ye aittir. Orijinal repo kaybolduğu için burada paylaşım yapılmıştır. Şuanda bu repo üzerindeki çalışmalar bir takvime bağlı olmadan sürdürülmektedir**
 
 # Yargı MCP: Türk Hukuk Kaynakları için MCP Sunucusu
 
